@@ -32,6 +32,8 @@ class RecorderService : Service() {
         const val NOTIF_ID = 88
         const val ACTION_START = "start"
         const val ACTION_STOP = "stop"
+        const val PREFS = "recorder_prefs"
+        const val KEY_FPS = "fps"
         var isRecording = false
     }
 
@@ -80,7 +82,7 @@ class RecorderService : Service() {
             setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setVideoSize(width, height)
-            setVideoFrameRate(30)
+            setVideoFrameRate(getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_FPS, 30))
             setVideoEncodingBitRate(8 * 1024 * 1024)
             setOutputFile(outputFile!!.absolutePath)
             prepare()
