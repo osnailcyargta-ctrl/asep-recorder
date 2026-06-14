@@ -59,7 +59,7 @@ class RecorderService : Service() {
         mediaProjection = projectionManager.getMediaProjection(resultCode, data)
 
         val metrics = DisplayMetrics()
-        val windowManager = getSystemService(WINDOW_MANAGER_SERVICE) as WindowManager
+        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay.getMetrics(metrics)
         val width = metrics.widthPixels
         val height = metrics.heightPixels
