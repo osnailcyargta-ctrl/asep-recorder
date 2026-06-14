@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#CC000000"
+    android:padding="8dp">
+
+    <!-- Pause / Resume -->
+    <ImageButton
+        android:id="@+id/overlay_pause"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:src="@android:drawable/ic_media_pause"
+        android:background="#55FFFFFF"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Pause"/>
+
+    <!-- Stop -->
+    <ImageButton
+        android:id="@+id/overlay_stop"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:src="@android:drawable/ic_media_next"
+        android:background="#BBDD3333"
+        android:contentDescription="Stop"/>
+
+</LinearLayout>
