@@ -15,7 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat\nimport android.widget.SeekBar\nimport android.content.Context
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,6 +52,24 @@ class MainActivity : AppCompatActivity() {
         stopButton.setOnClickListener {
             stopRecording()
         }
+
+        prefs = getSharedPreferences(RecorderService.PREFS, Context.MODE_PRIVATE)
+        fpsSlider = findViewById(R.id.fps_slider)
+        fpsLabel = findViewById(R.id.fps_label)
+
+        val savedFps = prefs.getInt(RecorderService.KEY_FPS, 30)
+        fpsSlider.progress = savedFps - 10  // range 10-90
+        fpsLabel.text = "FPS: $savedFps"
+
+        fpsSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
+                val fps = progress + 10
+                fpsLabel.text = "FPS: $fps"
+                prefs.edit().putInt(RecorderService.KEY_FPS, fps).apply()
+            }
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
+        })
     }
 
     override fun onResume() {
@@ -65,12 +83,14 @@ class MainActivity : AppCompatActivity() {
             statusText.text = "Recording..."
             startButton.visibility = android.view.View.GONE
             stopButton.visibility = android.view.View.VISIBLE
+            findViewById<android.view.View>(R.id.fps_container).visibility = android.view.View.GONE
         } else {
             statusText.text = "Ready to record"
             startButton.visibility = android.view.View.VISIBLE
             stopButton.visibility = android.view.View.GONE
             timerText.text = "00:00"
             elapsedSeconds = 0
+            findViewById<android.view.View>(R.id.fps_container).visibility = android.view.View.VISIBLE
         }
     }
 
