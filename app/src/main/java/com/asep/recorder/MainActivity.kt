@@ -2,20 +2,21 @@ package com.asep.recorder
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat\nimport android.widget.SeekBar\nimport android.content.Context
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
     private lateinit var countdownContainer: TextView
+    private lateinit var prefs: android.content.SharedPreferences
+    private lateinit var fpsSlider: SeekBar
+    private lateinit var fpsLabel: TextView
 
     private var elapsedSeconds = 0
     private var timerHandler: Handler? = null
@@ -43,22 +47,12 @@ class MainActivity : AppCompatActivity() {
         startButton = findViewById(R.id.btn_start)
         stopButton = findViewById(R.id.btn_stop)
 
-        updateUI()
-
-        startButton.setOnClickListener {
-            checkPermissionsAndStart()
-        }
-
-        stopButton.setOnClickListener {
-            stopRecording()
-        }
-
         prefs = getSharedPreferences(RecorderService.PREFS, Context.MODE_PRIVATE)
         fpsSlider = findViewById(R.id.fps_slider)
         fpsLabel = findViewById(R.id.fps_label)
 
         val savedFps = prefs.getInt(RecorderService.KEY_FPS, 30)
-        fpsSlider.progress = savedFps - 10  // range 10-90
+        fpsSlider.progress = savedFps - 10
         fpsLabel.text = "FPS: $savedFps"
 
         fpsSlider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -70,6 +64,16 @@ class MainActivity : AppCompatActivity() {
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
+
+        updateUI()
+
+        startButton.setOnClickListener {
+            checkPermissionsAndStart()
+        }
+
+        stopButton.setOnClickListener {
+            stopRecording()
+        }
     }
 
     override fun onResume() {
@@ -127,7 +131,6 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQ_SCREEN_CAPTURE && resultCode == Activity.RESULT_OK && data != null) {
-            // Small delay to let UI settle before recording starts
             Handler(Looper.getMainLooper()).postDelayed({
                 val intent = Intent(this, RecorderService::class.java).apply {
                     action = RecorderService.ACTION_START
